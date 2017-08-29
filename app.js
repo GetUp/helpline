@@ -41,4 +41,8 @@ app.post('/transcript', async ({body, query}, res, next) => {
   })
 })
 
+app.post('/hangup', ({body, query}, res) => {
+  res.sendStatus(200)
+})
+
 app.listen(port, () => console.log('App running on port', port))
