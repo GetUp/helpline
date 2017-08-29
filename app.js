@@ -4,10 +4,12 @@ const bodyParser = require('body-parser');
 const port = process.env.PORT || 5010
 const campaign = process.env.CAMPAIGN || 'test'
 const numbers = (process.env.NUMBERS || '').split(',')
-const base = process.env.BASE
+const base = process.env.BASE_URL
 const callerId = process.env.CALLER_ID
 const api = plivo.RestAPI({ authId: process.env.PLIVO_API_ID || 'test', authToken: process.env.PLIVO_API_TOKEN || 'test'})
 app.use(bodyParser.urlencoded({extended: true}));
+const IncomingWebhook = require('@slack/client').IncomingWebhook
+const webhook = new IncomingWebhook(process.env.SLACK_WEBHOOK_URL)
 
 app.post('/connect', async ({body, query}, res) => {
   const r = plivo.Response();
@@ -29,12 +31,13 @@ app.post('/tried_volunteer', async ({body, query}, res) => {
 })
 
 app.post('/transcript', async ({body, query}, res, next) => {
-  console.error(body)
-  api.get_cdr({call_uuid: body.call_uuid}, (err, data) => {
+  api.get_cdr({call_uuid: body.call_uuid}, (err, statusCode, data) => {
     if (err) return next(err)
-    console.error(err)
-    console.error(data)
-    res.sendStatus(200);
+    let text = `From: ${data.from_number} at ${data.answer_time}\n${body.transcripton}\n<https://s3.amazonaws.com/recordings_2013/${body.recording_id}|Listen>`
+    webhook.send({text}, err => {
+      if (err) return next (err)
+      res.sendStatus(200);
+    })
   })
 })
 

@@ -9,6 +9,7 @@
     "deploy-production": "git push yes-helpline HEAD:master"
   },
   "dependencies": {
+    "@slack/client": "^3.12.0",
     "body-parser": "^1.17.2",
     "express": "^4.15.2",
     "plivo": "GetUp/plivo-node#production"
