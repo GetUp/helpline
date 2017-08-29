@@ -31,6 +31,7 @@ app.post('/tried_volunteer', async ({body, query}, res) => {
 })
 
 app.post('/transcript', async ({body, query}, res, next) => {
+  console.error(body)
   api.get_cdr({call_uuid: body.call_uuid}, (err, statusCode, data) => {
     if (err) return next(err)
     let text = `From: ${data.from_number} at ${data.answer_time}\n${body.transcripton || 'no message'}\n<https://s3.amazonaws.com/recordings_2013/${body.recording_id}.mp3|Listen>`
