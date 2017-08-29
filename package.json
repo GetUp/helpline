@@ -1,0 +1,16 @@
+{
+  "name": "helpline",
+  "private": true,
+  "engines": {
+    "node": "8.2"
+  },
+  "scripts": {
+    "start": "node ./app.js",
+    "deploy-production": "git push yes-helpline HEAD:master"
+  },
+  "dependencies": {
+    "body-parser": "^1.17.2",
+    "express": "^4.15.2",
+    "plivo": "GetUp/plivo-node#production"
+  }
+}
