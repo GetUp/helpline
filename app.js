@@ -13,7 +13,7 @@ const webhook = new IncomingWebhook(process.env.SLACK_WEBHOOK_URL)
 
 app.post('/connect', async ({body, query}, res) => {
   const r = plivo.Response();
-  if (numbers.length > 0) {
+  if (numbers[0] !== '') {
     r.addSpeak(`This is the support line for the ${campaign}. Transferring you to a volunteer.`, {language: 'en-GB', voice: 'MAN'})
     const dial = r.addDial({callerId, timeout: 15, action: `${base}/tried_volunteer`})
     numbers.forEach(dial.addNumber.bind(dial))
