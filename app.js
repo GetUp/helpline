@@ -13,9 +13,14 @@ const webhook = new IncomingWebhook(process.env.SLACK_WEBHOOK_URL)
 
 app.post('/connect', async ({body, query}, res) => {
   const r = plivo.Response();
-  r.addSpeak(`This is the support line for the ${campaign}. Transferring you to a volunteer.`, {language: 'en-GB', voice: 'MAN'})
-  const dial = r.addDial({callerId, timeout: 15, action: `${base}/tried_volunteer`})
-  numbers.forEach(dial.addNumber.bind(dial))
+  if (numbers.length > 0) {
+    r.addSpeak(`This is the support line for the ${campaign}. Transferring you to a volunteer.`, {language: 'en-GB', voice: 'MAN'})
+    const dial = r.addDial({callerId, timeout: 15, action: `${base}/tried_volunteer`})
+    numbers.forEach(dial.addNumber.bind(dial))
+  } else {
+    r.addSpeak('None of our volunteers are available right now. Please leave a short message after the beep and we will call you back.', {language: 'en-GB', voice: 'MAN'})
+    r.addRecord({maxLength: '120', playBeep: true, transcriptionType: 'auto', transcriptionUrl: `${base}/transcript`})
+  }
   res.send(r.toXML());
 })
 
