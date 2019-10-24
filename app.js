@@ -11,11 +11,14 @@ const api = plivo.RestAPI({ authId, authToken: process.env.PLIVO_API_TOKEN || 't
 app.use(bodyParser.urlencoded({ extended: true }));
 const IncomingWebhook = require('@slack/client').IncomingWebhook
 const webhook = new IncomingWebhook(process.env.SLACK_WEBHOOK_URL)
+const voice = { language: 'en-GB', voice: 'MAN' }
+
 
 app.post('/connect', async ({ body, query }, res) => {
   const r = plivo.Response();
+  r.addSpeak(`This is the support line for the ${campaign}.`, voice)
   if (numbers[0] !== '') {
-    r.addSpeak(`This is the support line for the ${campaign}. Transferring you to a volunteer.`, { language: 'en-GB', voice: 'MAN' })
+    r.addSpeak(`Transferring you to a volunteer.`, voice)
     const dial = r.addDial({ callerId, timeout: 15, action: `${base}/tried_volunteer` })
     numbers.forEach(dial.addNumber.bind(dial))
   } else {
